@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
+import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
@@ -54,10 +55,24 @@ export function SignIn() {
               <Input id="email" type="email" {...register('email')} />
             </div>
 
-            <Button disabled={isSubmitting} className="w-full" type="submit">
+            <Button
+              disabled={isSubmitting}
+              className="w-full rounded"
+              type="submit"
+            >
               Acessar painel
             </Button>
           </form>
+          <Button
+            asChild
+            variant={'link'}
+            className="absolute bottom-2 max-h-fit w-[340px] rounded border border-red-500"
+          >
+            <Link to="/signup">
+              <p>Não tem conta? Cadastre-se</p>
+              <span className="underline"> </span>
+            </Link>
+          </Button>
         </div>
       </div>
     </>
