@@ -1,4 +1,4 @@
-import { DollarSign, HeartCrack } from 'lucide-react'
+import { HeartCrack } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
