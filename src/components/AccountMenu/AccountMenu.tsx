@@ -1,4 +1,8 @@
 import { Building, ChevronDown, LogOut } from 'lucide-react'
+import { useQuery } from 'react-query'
+
+import { getManagedRestaurant } from '@/api/get-managed-restaurant'
+import { getProfile } from '@/api/get-profile'
 
 import { Button } from '../ui/button'
 import {
@@ -11,6 +15,15 @@ import {
 } from '../ui/dropdown-menu'
 
 export function AccountMenu() {
+  const { data: profileData } = useQuery({
+    queryKey: ['profile'],
+    queryFn: getProfile,
+  })
+  const { data: restaurantData } = useQuery({
+    queryKey: ['managedRestaurant'],
+    queryFn: getManagedRestaurant,
+  })
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -18,14 +31,14 @@ export function AccountMenu() {
           variant={'outline'}
           className="flex select-none items-center gap-2 rounded"
         >
-          Meu Restô <ChevronDown className="h-4 w-4" />
+          {restaurantData?.name} <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="flex flex-col">
-          <span>Isaias</span>
+          <span>{profileData?.name}</span>
           <span className="text-cs font-normal text-muted-foreground">
-            resto@email.com
+            {profileData?.email}
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
