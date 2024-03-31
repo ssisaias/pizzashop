@@ -1,11 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { useForm } from 'react-hook-form'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { getManagedRestaurant } from '@/api/get-managed-restaurant'
+import { GetProfileResponse } from '@/api/get-profile'
 import { updateProfile } from '@/api/update-profile'
 
 import { Button } from '../ui/button'
@@ -28,9 +29,11 @@ const storeProfileSchema = z.object({
 type StoreProfileSchema = z.infer<typeof storeProfileSchema>
 
 export function StoreProfileDialog() {
+  const queryClient = useQueryClient()
   const { data: restaurantData } = useQuery({
     queryKey: ['managedRestaurant'],
     queryFn: getManagedRestaurant,
+    staleTime: Infinity,
   })
 
   const {
@@ -47,6 +50,18 @@ export function StoreProfileDialog() {
 
   const { mutateAsync: updateProfileFn } = useMutation({
     mutationFn: updateProfile,
+    onSuccess(_, { name, description }) {
+      const cached = queryClient.getQueriesData<GetProfileResponse>([
+        'managedRestaurant',
+      ])
+      if (cached) {
+        queryClient.setQueryData(['managedRestaurant'], {
+          ...cached,
+          name,
+          description,
+        })
+      }
+    },
   })
 
   async function handleUpdateProfile(data: StoreProfileSchema) {
