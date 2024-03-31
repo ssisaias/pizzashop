@@ -5,8 +5,10 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-import { getManagedRestaurant } from '@/api/get-managed-restaurant'
-import { GetProfileResponse } from '@/api/get-profile'
+import {
+  GetManagedRestaurant,
+  getManagedRestaurant,
+} from '@/api/get-managed-restaurant'
 import { updateProfile } from '@/api/update-profile'
 
 import { Button } from '../ui/button'
@@ -23,7 +25,7 @@ import { Textarea } from '../ui/textarea'
 
 const storeProfileSchema = z.object({
   name: z.string().min(1),
-  description: z.string(),
+  description: z.string().nullable(),
 })
 
 type StoreProfileSchema = z.infer<typeof storeProfileSchema>
@@ -48,18 +50,32 @@ export function StoreProfileDialog() {
     },
   })
 
+  function updateManagedRestaurantCache({
+    name,
+    description,
+  }: StoreProfileSchema) {
+    const cached = queryClient.getQueryData<GetManagedRestaurant>([
+      'managedRestaurant',
+    ])
+    if (cached) {
+      queryClient.setQueryData(['managedRestaurant'], {
+        ...cached,
+        name,
+        description,
+      })
+    }
+    return { cached }
+  }
+
   const { mutateAsync: updateProfileFn } = useMutation({
     mutationFn: updateProfile,
-    onSuccess(_, { name, description }) {
-      const cached = queryClient.getQueriesData<GetProfileResponse>([
-        'managedRestaurant',
-      ])
-      if (cached) {
-        queryClient.setQueryData(['managedRestaurant'], {
-          ...cached,
-          name,
-          description,
-        })
+    onMutate({ name, description }) {
+      const { cached } = updateManagedRestaurantCache({ name, description })
+      return { cached }
+    },
+    onError(_error, _variables, context) {
+      if (context?.cached) {
+        updateManagedRestaurantCache(context.cached)
       }
     },
   })
