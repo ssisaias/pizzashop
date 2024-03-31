@@ -21,6 +21,7 @@ export function AccountMenu() {
   const { data: profileData, isLoading: isLoadingProfileData } = useQuery({
     queryKey: ['profile'],
     queryFn: getProfile,
+    staleTime: Infinity, // this tells react-query to never refetch this query automatically (e.g. window regains focus)
   })
   const { data: restaurantData, isLoading: isLoadingRestaurantData } = useQuery(
     {
