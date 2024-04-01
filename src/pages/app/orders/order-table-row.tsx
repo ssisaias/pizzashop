@@ -40,7 +40,7 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
         {formatDistanceToNow(order.createdAt, {
           locale: ptBR,
           addSuffix: true,
-        })} 
+        })}
       </TableCell>
       <TableCell>
         <OrderStatus status={order.status} />
