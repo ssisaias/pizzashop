@@ -1,3 +1,9 @@
+import { formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { useQuery } from 'react-query'
+
+import { getOrderDetails } from '@/api/get-order-details'
+import { OrderStatus } from '@/components/OrderStatus/order-status'
 import {
   DialogContent,
   DialogDescription,
@@ -14,93 +20,132 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-export function OrderDetails() {
+export interface OrderDetailProps {
+  orderId: string
+  open: boolean
+}
+
+export function OrderDetails({ orderId, open }: OrderDetailProps) {
+  const { data: orderData } = useQuery({
+    queryKey: ['order', orderId],
+    queryFn: () => getOrderDetails({ orderId }),
+    enabled: open,
+  })
+
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Pedido: 123456</DialogTitle>
+        <DialogTitle>Pedido: {orderId}</DialogTitle>
         <DialogDescription>
           <span>Cliente: </span>
           <strong>João da Silva</strong>
         </DialogDescription>
       </DialogHeader>
 
-      <div className="space-y-6">
-        <Table>
-          <TableBody>
-            <TableRow>
-              <TableCell className="text-muted-foreground">Status</TableCell>
-              <TableCell className="flex justify-end">
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-slate-400"></span>
-                  <span className="font-medium text-muted-foreground">
-                    Pendente
-                  </span>
-                </div>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="text-muted-foreground">Cliente</TableCell>
-              <TableCell className="flex justify-end">
-                <span className="font-medium text-muted-foreground">
-                  Joaão da Silva
-                </span>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="text-muted-foreground">telefone</TableCell>
-              <TableCell className="flex justify-end">
-                <span className="font-medium text-muted-foreground">
-                  654321
-                </span>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="text-muted-foreground">Email</TableCell>
-              <TableCell className="flex justify-end">
-                <span className="font-medium text-muted-foreground">
-                  teste@email.com
-                </span>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="text-muted-foreground">
-                Data do Pedido
-              </TableCell>
-              <TableCell className="flex justify-end">
-                <span className="font-medium text-muted-foreground">
-                  01/01/2021
-                </span>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
+      {orderData && (
+        <div>
+          <div className="space-y-6">
+            <Table>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="text-muted-foreground">
+                    Status
+                  </TableCell>
+                  <TableCell className="flex justify-end">
+                    <OrderStatus status={orderData.status} />
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="text-muted-foreground">
+                    Cliente
+                  </TableCell>
+                  <TableCell className="flex justify-end">
+                    <span className="font-medium text-muted-foreground">
+                      {orderData.customer.name}
+                    </span>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="text-muted-foreground">Phone</TableCell>
+                  <TableCell className="flex justify-end">
+                    <span className="font-medium text-muted-foreground">
+                      {orderData.customer.phone ?? '-'}
+                    </span>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="text-muted-foreground">Email</TableCell>
+                  <TableCell className="flex justify-end">
+                    <span className="font-medium text-muted-foreground">
+                      {orderData.customer.email}
+                    </span>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="text-muted-foreground">
+                    Data do Pedido
+                  </TableCell>
+                  <TableCell className="flex justify-end">
+                    {formatDistanceToNow(orderData.createdAt, {
+                      locale: ptBR,
+                      addSuffix: true,
+                    })}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Produto</TableHead>
-            <TableHead className="text-right">Qtd.</TableHead>
-            <TableHead className="text-right">Preço</TableHead>
-            <TableHead className="text-right">Subtotal</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow>
-            <TableCell>Pizza SuperPepperoni</TableCell>
-            <TableCell className="text-right">2</TableCell>
-            <TableCell className="text-right">R$ 60</TableCell>
-            <TableCell className="text-right">R$ 120</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={3}>Total do pedido</TableCell>
-            <TableCell className="text-right font-medium">R$ 120</TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Produto</TableHead>
+                <TableHead className="text-right">Qtd.</TableHead>
+                <TableHead className="text-right">Preço</TableHead>
+                <TableHead className="text-right">Subtotal</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {orderData.orderItems.map((item) => {
+                return (
+                  <TableRow key={item.id}>
+                    <TableCell>{item.product.name}</TableCell>
+                    <TableCell className="text-right">
+                      {item.quantity}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {(item.priceInCents / 100).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      })}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {(
+                        (item.priceInCents * item.quantity) /
+                        100
+                      ).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                      })}
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={3}>Total do pedido</TableCell>
+                <TableCell className="text-right font-medium">
+                  {(orderData.totalInCents / 100).toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                  })}
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </div>
+      )}
     </DialogContent>
   )
 }
