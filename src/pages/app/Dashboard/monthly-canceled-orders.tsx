@@ -4,6 +4,8 @@ import { useQuery } from 'react-query'
 import { getMonthlyCanceledOrdersAmount } from '@/api/get-monthly-canceled-orders-amount'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
+import { MetricCardSkeleton } from './metric-card-skeleton'
+
 export function MonthlyCanceledOrdersCard() {
   const { data: monthlyCanceledOrdersAmount } = useQuery({
     queryFn: getMonthlyCanceledOrdersAmount,
@@ -19,7 +21,7 @@ export function MonthlyCanceledOrdersCard() {
         <HeartCrack className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent className="space-y-1">
-        {monthlyCanceledOrdersAmount && (
+        {monthlyCanceledOrdersAmount ? (
           <>
             <span className="text-2xl font-bold tracking-tight">
               {monthlyCanceledOrdersAmount.amount}
@@ -42,6 +44,8 @@ export function MonthlyCanceledOrdersCard() {
               )}
             </p>
           </>
+        ) : (
+          <MetricCardSkeleton />
         )}
       </CardContent>
     </Card>

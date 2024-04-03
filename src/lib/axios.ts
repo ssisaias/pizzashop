@@ -10,6 +10,8 @@ export const api = axios.create({
 
 // Throttling: just comment / uncomment
 api.interceptors.request.use(async (config) => {
-  await new Promise((resolve) => setTimeout(resolve, 750))
+  await new Promise((resolve) =>
+    setTimeout(resolve, Math.round(Math.random() * 3155)),
+  )
   return config
 })
