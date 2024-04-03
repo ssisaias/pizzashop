@@ -1,4 +1,4 @@
-import { BarChart } from 'lucide-react'
+import { BarChart, Loader2 } from 'lucide-react'
 import { useQuery } from 'react-query'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import colors from 'tailwindcss/colors'
@@ -31,7 +31,7 @@ export function PopularProductsChart() {
         </div>
       </CardHeader>
       <CardContent>
-        {popularProductsData && (
+        {popularProductsData ? (
           <ResponsiveContainer width="100%" height={240}>
             <PieChart style={{ fontSize: '12' }}>
               <Pie
@@ -89,6 +89,10 @@ export function PopularProductsChart() {
               <Tooltip />
             </PieChart>
           </ResponsiveContainer>
+        ) : (
+          <div className="h-240 flex w-full items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
         )}
       </CardContent>
     </Card>
