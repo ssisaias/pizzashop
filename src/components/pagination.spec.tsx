@@ -6,7 +6,10 @@ import { Pagination } from './pagination'
 const onPageChangeCallback = vi.fn() // this is a spy function
 
 describe('Pagination', () => {
-  
+  beforeEach(() => {
+    onPageChangeCallback.mockClear()
+  })
+
   it('should display the right amount of pages and results', () => {
     const wrapper = render(
       <Pagination
