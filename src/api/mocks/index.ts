@@ -2,7 +2,9 @@ import { setupWorker } from 'msw/browser'
 
 import { env } from '@/env'
 
-export const worker = setupWorker()
+import { signinMock } from './signin-mock'
+
+export const worker = setupWorker(signinMock)
 
 export async function enableMSW() {
   if (env.MODE !== 'test') {
