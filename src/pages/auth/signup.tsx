@@ -49,8 +49,8 @@ export function SignUp() {
           },
         })
       })
-      .catch((err) => {
-        toast.error(err)
+      .catch(() => {
+        toast.error('erro ao cadastrar!')
       })
   }
 
