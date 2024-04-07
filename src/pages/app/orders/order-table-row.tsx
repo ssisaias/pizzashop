@@ -8,7 +8,7 @@ import { approveOrder } from '@/api/approve-order'
 import { cancelOrder } from '@/api/cancel-order'
 import { deliveryOrder } from '@/api/deliver-order'
 import { dispatchOrder } from '@/api/dispatch-order'
-import { GetOrdersResonse } from '@/api/get-orders'
+import { GetOrdersResponse } from '@/api/get-orders'
 import { OrderStatus } from '@/components/OrderStatus/order-status'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
@@ -31,7 +31,7 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
   const queryClient = useQueryClient()
 
   function updateOrderStatusOnCache(orderId: string, status: OrderStatus) {
-    const ordersListCached = queryClient.getQueriesData<GetOrdersResonse>({
+    const ordersListCached = queryClient.getQueriesData<GetOrdersResponse>({
       queryKey: ['orders'],
     })
 
@@ -40,7 +40,7 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
         return
       }
 
-      queryClient.setQueryData<GetOrdersResonse>(cacheKey, {
+      queryClient.setQueryData<GetOrdersResponse>(cacheKey, {
         ...cacheData,
         orders: cacheData.orders.map((order) => {
           if (order.orderId === orderId) {
