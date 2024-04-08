@@ -16,9 +16,10 @@ test('update profile successfully', async ({ page }) => {
   expect(toast).toBeVisible()
 
   await page.getByText('Cancelar').click()
-  await page.waitForTimeout(250)
 
-  expect(page.getByRole('button', { name: 'new restaurant' })).toBeVisible()
+  await expect(
+    page.getByRole('button', { name: 'new restaurant' }),
+  ).toBeVisible()
 
   await page.waitForTimeout(500)
 })
