@@ -1,4 +1,4 @@
-##Pizza shop
+## Pizza shop
 
 Sample order control application built with React, using:
 
