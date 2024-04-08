@@ -9,7 +9,7 @@ export const getManagedRestaurantMock = http.get<
 >('/managed-restaurant', () => {
   return HttpResponse.json({
     id: 'custom-id',
-    name: 'Pizza Shop',
+    name: 'Pizza Shop (Preview)',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     managerId: 'custom-user-id',
     createAt: new Date(),

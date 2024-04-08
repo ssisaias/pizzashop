@@ -1,5 +1,7 @@
 import { Helmet } from 'react-helmet-async'
 
+import { env } from '@/env.ts'
+
 import { DailyOrdersAmountCard } from './daily-orders-amount-card'
 import { MonthlyCanceledOrdersCard } from './monthly-canceled-orders'
 import { MonthOrdersAmountCard } from './monthly-orders-amount-card'
@@ -12,15 +14,18 @@ export function Dashboard() {
     <>
       <Helmet title="Dashboard" />
       <div className="flex flex-col gap-4">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-
+        <h1 className="text-3xl font-bold tracking-tight">
+          Dashboard{'    '}
+          {env.MODE === 'test' && (
+            <span className="text-xl text-gray-400">(preview)</span>
+          )}
+        </h1>{' '}
         <div className="grid grid-cols-4 gap-4">
           <MonthlyRevenueCard />
           <MonthOrdersAmountCard />
           <DailyOrdersAmountCard />
           <MonthlyCanceledOrdersCard />
         </div>
-
         <div className="grid grid-cols-9 gap-4">
           <RevenueChart></RevenueChart>
           <PopularProductsChart />
