@@ -16,7 +16,7 @@ export function Dashboard() {
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold tracking-tight">
           Dashboard{'    '}
-          {env.MODE === 'test' && (
+          {env.VITE_MODE === 'test' && (
             <span className="text-xl text-gray-400">(preview)</span>
           )}
         </h1>{' '}

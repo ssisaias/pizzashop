@@ -41,7 +41,7 @@ export const worker = setupWorker(
 )
 
 export async function enableMSW() {
-  if (env.MODE !== 'test') {
+  if (env.VITE_MODE !== 'test') {
     return
   }
   await worker.start()

@@ -42,7 +42,7 @@ export function SignIn() {
   async function handleSignIn(data: SignInForm) {
     await authenticate({ email: data.email })
       .then(() => {
-        if (env.MODE === 'test') {
+        if (env.VITE_MODE === 'test') {
           toast.success('Clique para ir ao dashboard', {
             action: {
               label: 'Dashboard',
@@ -79,7 +79,9 @@ export function SignIn() {
             <p className="text-sm text-muted-foreground">
               Acompanhe suas vendas{' '}
             </p>{' '}
-            {env.MODE === 'test' && <p>Demo mode, use: john.doe@example.com</p>}
+            {env.VITE_MODE === 'test' && (
+              <p>Demo mode, use: john.doe@example.com</p>
+            )}
           </div>
 
           <form className="space-y-4" onSubmit={handleSubmit(handleSignIn)}>
